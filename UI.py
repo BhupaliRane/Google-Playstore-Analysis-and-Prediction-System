@@ -17,8 +17,8 @@ with open("Content Rating_label_encoded.pkl", "rb") as f:
 with open("mean_values.pkl", "rb") as f:
     mean_values = pickle.load(f)  # Dictionary containing mean values of Installs, Free, Rating_Count, Editors_Choice
 
-# Function to encode user input using K-Fold Target Encoding mapping
-def encode_category_kfold(value, encoding_map):
+# Function to encode user input using Label Encoding mapping
+def encode_category(value, encoding_map):
     return encoding_map.get(value, round(np.mean(list(encoding_map.values())), 1))
 
 @st.cache_resource
@@ -62,8 +62,8 @@ elif st.session_state["page"] == "Rating Prediction":
     ad_supported = 1 if ad_supported == "Yes" else 0
 
     # Apply encoding to categorical features
-    category_encoded = encode_category_kfold(category, category_encoding)
-    content_rating_encoded = encode_category_kfold(content_rating, content_rating_encoding)
+    category_encoded = encode_category(category, category_encoding)
+    content_rating_encoded = encode_category(content_rating, content_rating_encoding)
 
     # **Replace missing columns with mean values**
     installs_mean = mean_values.get("Installs", 0)
@@ -77,17 +77,16 @@ elif st.session_state["page"] == "Rating Prediction":
         if st.button("Predict Rating"):
             
             try:
-                # Final input array (ensuring all required features are included)
                 input_features = np.array([[category_encoded, size_in_mb, in_app_purchases, ad_supported, content_rating_encoded, 
                                 installs_mean, free_mean, rating_count_mean, editors_choice_mean]])
                 prediction = rating_model.predict(input_features)[0]
-                st.success(f"Predicted Rating: {float(prediction):.2f}")
+                st.success(f"Predicted Rating: {int(prediction):.2f}")
 
-                category_encoded = float(category_encoded)  # Convert to float
-                size_in_mb = float(size_in_mb)  # Convert to float
-                in_app_purchases = int(in_app_purchases)  # Convert to int
-                ad_supported = int(ad_supported)  # Convert to int
-                content_rating_encoded = float(content_rating_encoded)  # Convert to float
+                category_encoded = int(category_encoded)  
+                size_in_mb = float(size_in_mb) 
+                in_app_purchases = int(in_app_purchases)  
+                ad_supported = int(ad_supported)  
+                content_rating_encoded = int(content_rating_encoded)  
                 prediction = int(prediction)
 
 
