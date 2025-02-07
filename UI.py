@@ -7,17 +7,17 @@ import pandas as pd
 st.set_page_config(page_title="Google Playstore Prediction", page_icon="📱", layout="centered")
 
 # Load encoding mappings
-with open("Google-Playstore-Analysis-and-Prediction-System-main\Category_label_encoded.pkl", "rb") as f:
+with open("Category_label_encoded.pkl", "rb") as f:
     category_encoding = pickle.load(f)
 
-with open("Google-Playstore-Analysis-and-Prediction-System-main\Content Rating_label_encoded.pkl", "rb") as f:
+with open("Content Rating_label_encoded.pkl", "rb") as f:
     content_rating_encoding = pickle.load(f)
-with open("Google-Playstore-Analysis-and-Prediction-System-main\Installs_Category_label_encoded.pkl", "rb") as f:
+with open("Installs_Category_label_encoded.pkl", "rb") as f:
     install_category_encoding = pickle.load(f)
 
 # Load mean values for missing columns
-#with open("mean_values.pkl", "rb") as f:
- #   mean_values = pickle.load(f)  # Dictionary containing mean values of Installs, Free, Rating_Count, Editors_Choice
+with open("mean_values.pkl", "rb") as f:
+    mean_values = pickle.load(f)  # Dictionary containing mean values of Installs, Free, Rating_Count, Editors_Choice
 
 # Function to encode user input using Label Encoding mapping
 def encode_category(value, encoding_map):
@@ -25,10 +25,10 @@ def encode_category(value, encoding_map):
 
 @st.cache_resource
 def load_models():
-    with open("Google-Playstore-Analysis-and-Prediction-System-main\installs_model.pkl", "rb") as f:
+    with open("rating_model_one.pkl", "rb") as f:
         rating_model = pickle.load(f)
 
-    with open("Google-Playstore-Analysis-and-Prediction-System-main\installs_model.pkl", "rb") as f:
+    with open("rating_model_one.pkl", "rb") as f:
         installs_model = pickle.load(f)
     
     return rating_model, installs_model
@@ -131,21 +131,32 @@ elif st.session_state["page"] == "Installs Prediction":
     # Apply encoding to categorical features
     category_encoded = encode_category(category, category_encoding)
     content_rating_encoded = encode_category(content_rating, content_rating_encoding)
-    
+    rating_count_mean = mean_values.get("Rating_Count", 0)
+    editors_choice_mean = mean_values.get("Editors_Choice", 0)
     
 
     col1, col2, col3 = st.columns([1, 2, 1])
     with col1:
         if st.button("Predict Installs"):
             try:
-                input_features = np.array([[category_encoded, size_in_mb, free, content_rating_encoded, ad_supported, in_app_purchases]])
+                input_features = np.array([[category_encoded, size_in_mb, free, content_rating_encoded, ad_supported, in_app_purchases, rating_count_mean, editors_choice_mean]])
+                prediction_encoded = installs_model.predict(input_features)[0]  # Might be an array
+                prediction_encoded = prediction_encoded.item()  # Convert NumPy array to Python scalar
 
-                prediction_encoded = installs_model.predict(input_features)[0]
+                print("Raw Prediction Output:", prediction_encoded)  # Debugging step
 
 # Decode the predicted installs category
-                decoded_prediction = [key for key, value in install_category_encoding.items() if value == prediction_encoded][0]
+                # Decode the predicted installs category
+                decoded_predictions = [key for key, value in install_category_encoding.items() if value == prediction_encoded]
 
-                st.success(f"Predicted Installs Category: {decoded_prediction}")
+# Check if the decoding was successful
+                if decoded_predictions:
+                    decoded_prediction = decoded_predictions[0]
+                    st.success(f"Predicted Installs Category: {decoded_prediction}")
+                else:
+                    st.error("Prediction category not found in encoding map.")
+
+
 
 # Optional: You can print or log the intermediate values to see the decoded result
                 category_encoded = int(category_encoded)  
