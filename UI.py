@@ -21,7 +21,7 @@ def get_base64_image(image_path):
     return f"data:image/png;base64,{base64_str}"
 
 # Load background image'
-background_image = get_base64_image("Images/bg.jpg")
+background_image = get_base64_image(r"C:\Users\ryran\OneDrive\Desktop\CdacProject\Google-Playstore-Analysis-and-Prediction-System\Images\bg.jpg")
 
 # Adjust container width dynamically
 page = st.session_state.get("page", "Home")
@@ -48,7 +48,7 @@ st.markdown(
             font-size: 28px;
             font-weight: bold;
             text-align: center;
-            color: white !important;
+            color: #fff !important;
             margin-bottom: 20px;
         }}
         .block-container {{
@@ -59,11 +59,12 @@ st.markdown(
             border-radius: 15px;
             box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.3);
             text-align: center;
+            color: #fff !important;
             backdrop-filter: blur(50px);
         }}
         .stButton > button {{
             width: 80%;
-            background-color: #3498db;
+            background-color: #578FCA;
             color: white;
             border-radius: 10px;
             padding: 10px;
@@ -129,7 +130,7 @@ def encode_category(value, encoding_map):
 def show_tableau_dashboard():
     tableau_html = """
     <div class='tableauContainer' style='width: 100%; margin: auto, padding:20px;'>
-        <div class='tableauPlaceholder' id='viz1739257421829' style='position: relative; width: 100%; height: 90vh;'>
+        <div class='tableauPlaceholder' id='viz1739257421829' style='position: relative; width: 80%; height: 40vh;'>
             <noscript>
                 <a href='#'><img alt=' ' src='https://public.tableau.com/static/images/DB/DBDAProject_17392469401620/Dashboard1/1_rss.png' style='border: none; width: 100%;' /></a>
             </noscript>
@@ -169,11 +170,11 @@ def show_tableau_dashboard():
         vizElement.parentNode.insertBefore(scriptElement, vizElement);
     </script>
     """
-    st.components.v1.html(tableau_html, height=900)  # Slightly increased height for better display
+    st.components.v1.html(tableau_html, height=900)
     
 @st.cache_resource
 def load_models():
-    with open("NBmodel.pkl", "rb") as f:
+    with open("finetuning.pkl", "rb") as f:
         rating_model = pickle.load(f)
     return rating_model
 
@@ -202,15 +203,14 @@ if st.session_state["page"] == "Home":
             st.session_state["page"] = "View Dashboard"
 
 elif st.session_state["page"] == "Rating Prediction":
-    # st.markdown("<style>.container { max-width: 500px}</style>", unsafe_allow_html=True)
 
     st.title("Rating Prediction Model")
     
     # User inputs
-    category = st.selectbox("Select App Category", list(category_encoding.keys()))
+    category = st.selectbox("Select Your App Category", list(category_encoding.keys()))
     size_in_mb = st.number_input("Enter Size in MB", min_value=0.0, step=0.1)  
-    in_app_purchases = st.radio("Is In-App purchasing available in your app?", ["Yes", "No"], horizontal=True)  
-    ad_supported = st.radio("Does your application include Add's?", ["Yes", "No"], horizontal=True)  
+    in_app_purchases = st.radio("Is In-app purchase available in your app?", ["Yes", "No"], horizontal=True)  
+    ad_supported = st.radio("Does your app includes ad?", ["Yes", "No"], horizontal=True)  
     content_rating = st.selectbox("Select Content Rating", list(content_rating_encoding.keys()))
 
     in_app_purchases = 1 if in_app_purchases == "Yes" else 0
@@ -257,7 +257,6 @@ elif st.session_state["page"] == "Rating Prediction":
                 star_count = min(5, max(1, round(predicted_rating)))
                 stars_html = "".join([f"<span class='star' style='animation-delay:{i * 0.2}s;'>⭐</span>" for i in range(star_count)])
 
-                        # <h2>Predicted Rating: {predicted_rating}</h2>
                 st.markdown(f"""
                     <div class='popup'>
                         <div>{stars_html}</div>
@@ -277,7 +276,6 @@ elif st.session_state["page"] == "Rating Prediction":
                 cursor.execute(query, values)
                 conn.commit()
                 conn.close()
-                # st.success("Data inserted successfully!")
 
             except Exception as e:
                 st.error(f"Error during prediction: {e}")
