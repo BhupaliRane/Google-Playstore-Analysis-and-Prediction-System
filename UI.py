@@ -173,7 +173,7 @@ def show_tableau_dashboard():
     
 @st.cache_resource
 def load_models():
-    with open("finetuning.pkl", "rb") as f:
+    with open("NBmodel.pkl", "rb") as f:
         rating_model = pickle.load(f)
     return rating_model
 
