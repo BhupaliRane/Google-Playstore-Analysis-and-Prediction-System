@@ -4,6 +4,5 @@ numpy
 matplotlib
 seaborn
 scikit-learn
-base64
 mysql.connector
 pickle
