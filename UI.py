@@ -48,7 +48,7 @@ st.markdown(
             font-size: 28px;
             font-weight: bold;
             text-align: center;
-            color: #2C3E50;
+            color: white !important;
             margin-bottom: 20px;
         }}
         .block-container {{
@@ -209,8 +209,8 @@ elif st.session_state["page"] == "Rating Prediction":
     # User inputs
     category = st.selectbox("Select App Category", list(category_encoding.keys()))
     size_in_mb = st.number_input("Enter Size in MB", min_value=0.0, step=0.1)  
-    in_app_purchases = st.radio("In-App Purchase?", ["Yes", "No"], horizontal=True)  
-    ad_supported = st.radio("Ad Support?", ["Yes", "No"], horizontal=True)  
+    in_app_purchases = st.radio("Is In-App purchasing available in your app?", ["Yes", "No"], horizontal=True)  
+    ad_supported = st.radio("Does your application include Add's?", ["Yes", "No"], horizontal=True)  
     content_rating = st.selectbox("Select Content Rating", list(content_rating_encoding.keys()))
 
     in_app_purchases = 1 if in_app_purchases == "Yes" else 0
