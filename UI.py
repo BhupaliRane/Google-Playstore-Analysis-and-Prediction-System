@@ -21,7 +21,7 @@ def get_base64_image(image_path):
     return f"data:image/png;base64,{base64_str}"
 
 # Load background image'
-background_image = get_base64_image(r"C:\Users\ryran\OneDrive\Desktop\ProjectFolder\Project1\bg.jpg")
+background_image = get_base64_image("bg.jpg")
 
 # Adjust container width dynamically
 page = st.session_state.get("page", "Home")
