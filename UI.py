@@ -15,13 +15,15 @@ st.set_page_config(
 )
 
 # Function to encode local image to Base64
-def get_base64_image(image_path):
+def get_base64_image(image_filename):
+    import base64
+    image_path = os.path.join(os.path.dirname(__file__), "Images", image_filename)
     with open(image_path, "rb") as image_file:
-        base64_str = base64.b64encode(image_file.read()).decode()
-    return f"data:image/png;base64,{base64_str}"
+        encoded = base64.b64encode(image_file.read()).decode()
+    return encoded
 
-# Load background image'
-background_image = get_base64_image(r"Images\bg.jpg")
+# Usage
+background_image = get_base64_image("bg.jpg")
 
 # Adjust container width dynamically
 page = st.session_state.get("page", "Home")
