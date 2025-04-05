@@ -5,7 +5,6 @@ import mysql.connector
 import pandas as pd
 import base64
 import time
-import os
 
 
 # Set theme and layout
@@ -16,15 +15,13 @@ st.set_page_config(
 )
 
 # Function to encode local image to Base64
-def get_base64_image(image_filename):
-    import base64
-    image_path = os.path.join(os.path.dirname(__file__), "Images", image_filename)
+def get_base64_image(image_path):
     with open(image_path, "rb") as image_file:
-        encoded = base64.b64encode(image_file.read()).decode()
-    return encoded
+        base64_str = base64.b64encode(image_file.read()).decode()
+    return f"data:image/png;base64,{base64_str}"
 
-# Usage
-background_image = get_base64_image("bg.jpg")
+# Load background image'
+background_image = get_base64_image("Google-Playstore-Analysis-and-Prediction-System\Images\bg.jpg")
 
 # Adjust container width dynamically
 page = st.session_state.get("page", "Home")
