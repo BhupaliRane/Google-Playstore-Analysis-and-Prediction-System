@@ -5,6 +5,7 @@ import mysql.connector
 import pandas as pd
 import base64
 import time
+import os
 
 
 # Set theme and layout
@@ -20,8 +21,11 @@ def get_base64_image(image_path):
         base64_str = base64.b64encode(image_file.read()).decode()
     return f"data:image/png;base64,{base64_str}"
 
-# Load background image'
-background_image = get_base64_image("Google-Playstore-Analysis-and-Prediction-System/Images/bg.jpg")
+# # Load background image'
+# background_image = get_base64_image("Google-Playstore-Analysis-and-Prediction-System/Images/bg.jpg")
+
+image_path = os.path.join("Google-Playstore-Analysis-and-Prediction-System", "Images", "bg.jpg")
+background_image = get_base64_image(image_path)
 
 # Adjust container width dynamically
 page = st.session_state.get("page", "Home")
