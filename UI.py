@@ -17,14 +17,12 @@ st.set_page_config(
 
 # Function to encode local image to Base64
 def get_base64_image(image_path):
+    print("Looking for image at:", image_path)
+    print("Current working directory:", os.getcwd())
     with open(image_path, "rb") as image_file:
-        base64_str = base64.b64encode(image_file.read()).decode()
-    return f"data:image/png;base64,{base64_str}"
-
-# # Load background image'
-# background_image = get_base64_image("Google-Playstore-Analysis-and-Prediction-System/Images/bg.jpg")
-
-image_path = os.path.join("Google-Playstore-Analysis-and-Prediction-System", "Images", "bg.jpg")
+        encoded = base64.b64encode(image_file.read()).decode()
+    return encoded
+image_path = os.path.join("Images", "bg.jpg")
 background_image = get_base64_image(image_path)
 
 # Adjust container width dynamically
